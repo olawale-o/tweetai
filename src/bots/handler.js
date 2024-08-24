@@ -84,7 +84,7 @@ module.exports = {
         comments,
       });
     } catch (e) {
-      res.status(500).json({ err: err.message });
+      res.status(500).json({ err: e.message });
     }
   },
 };
