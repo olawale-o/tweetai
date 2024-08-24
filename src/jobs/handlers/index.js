@@ -7,7 +7,7 @@ const JobHandlers = {
   },
   sendTotalBots: async (job, done) => {
     const totalBots = await botService.totalBots();
-    console.log(`current total bots ${totalBots}`);
+
     done();
   },
 };

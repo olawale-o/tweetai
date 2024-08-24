@@ -21,6 +21,6 @@ agenda
 allDefinitions(agenda);
 
 // logs all registered jobs
-console.log({ jobs: agenda._definitions });
+// console.log({ jobs: agenda._definitions });
 
 module.exports = agenda;

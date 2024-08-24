@@ -19,7 +19,7 @@ module.exports = {
         bots: dbBots,
       });
     } catch (e) {
-      res.status(500).json(err);
+      res.status(500).json({ err: e.message });
     }
   },
   getPosts: async (req, res, next) => {
@@ -28,6 +28,16 @@ module.exports = {
       if (isNaN(parseInt(botId))) {
         throw new Error("botId is not a number");
       }
+
+      const botResult = await db
+        .select()
+        .from(bots)
+        .where(eq(bots.id, parseInt(botId)))
+        .limit(1);
+      if (botResult.length < 1) {
+        throw new Error("bot does not exist");
+      }
+
       const posts = await db
         .select()
         .from(botPosts)
@@ -47,22 +57,21 @@ module.exports = {
       if (isNaN(parseInt(botId)) || isNaN(parseInt(postId))) {
         throw new Error("bot id or post id is not a number");
       }
-      const bot = await db
+      const botResult = await db
         .select()
         .from(bots)
         .where(eq(bots.id, parseInt(botId)))
         .limit(1);
-      console.log(bot);
-      if (!bot) {
+      if (botResult.length < 1) {
         throw new Error("bot does not exist");
       }
-      const post = await db
+      const postResult = await db
         .select()
         .from(botPosts)
         .where(eq(botPosts.id, parseInt(postId)))
         .limit(1);
 
-      if (!post) {
+      if (postResult.length < 1) {
         throw new Error("post does not exist");
       }
       const comments = await db
