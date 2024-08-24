@@ -1,10 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
+const schedule = require("node-schedule");
 const rateLimit = require("express-rate-limit");
 
-const agenda = require("./jobs");
+const botService = require("./service");
+
+// const agenda = require("./jobs");
 
 const { streamHandler } = require("./handler");
 
@@ -18,11 +20,11 @@ const limiter = rateLimit({
   limit: 5,
 });
 
-// (async function () {
-//   await agenda.start();
+(async function () {
+  await agenda.start();
 
-//   await agenda.every("1.2 minutes", "create-bots", { priority: "high" });
-// })();
+  await agenda.every("1.2 minutes", "create-bots", { priority: "high" });
+})();
 
 const app = express();
 
