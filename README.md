@@ -1,5 +1,5 @@
 ## TweetAI
-
+> "TweetAI" is a bot generator that generates 500bots/hr.
 ## Built with
 - Node.js
 - MySQL
@@ -24,10 +24,10 @@ To install dependencies for the project
 npm install
 ```
 #### Setup Database
+ Create a database with name `tweetai_db` on MySQL instance
 ```sh
 npm run db:generate
 ```
-
 #### Migrate Database
 ```sh
 npm run db:migrate
@@ -58,4 +58,4 @@ To get all comments for a post created by a bot
 ## Acknowledgments
 
 - SmartInsight
-- JSON placehoder
+- JSONplacehoder
