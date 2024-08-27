@@ -2,7 +2,7 @@ const botService = require("../../service");
 
 const JobHandlers = {
   createBots: async (job, done) => {
-    await botService.createBots();
+    await botService.makeCall();
     done();
   },
   sendTotalBots: async (job, done) => {

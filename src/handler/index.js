@@ -13,7 +13,7 @@ const streamHandler = async (_req, res) => {
       const counts = await db.select({ value: count() }).from(bots);
       res.write("data: " + JSON.stringify({ counts }) + "\n\n");
     },
-    60 * 60 * 1000,
+    5 * 60 * 1000,
   );
 
   res.on("close", () => {

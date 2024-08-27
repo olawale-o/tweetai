@@ -1,12 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const schedule = require("node-schedule");
 const rateLimit = require("express-rate-limit");
 
 const botService = require("./service");
 
-// const agenda = require("./jobs");
+const agenda = require("./jobs");
 
 const { streamHandler } = require("./handler");
 

@@ -5,73 +5,65 @@ const { get } = require("../api");
 
 let lastId = 1;
 
-const createComments = async ({ postId }) => {
-  try {
-    let comments = [];
-    const response = await get("comments");
-    for (let i = 0; i < 10; i++) {
-      comments.push({
-        comment: `${response.data[i].body}`,
-        postId,
+const createComments = async (comments, ids) => {
+  let data = [];
+  for (let i = 0; i < ids.length; i++) {
+    for (let j = 0; j < 10; j++) {
+      data.push({
+        comment: `${comments[j].body}`,
+        postId: ids[i].id,
       });
     }
-    await db.insert(botPostComments).values(comments);
-  } catch (e) {
-    console.log(e);
   }
+  await db.insert(botPostComments).values(data);
 };
 
-const createPosts = async ({ botId }) => {
-  try {
-    const posts = [];
-    let ids = [];
-    const response = await get("posts");
-    for (let i = 0; i < 10; i++) {
-      posts.push({
-        title: `${response.data[i].title}-${botId}`,
-        content: response.data[i].body,
-        botId,
+const createPosts = async (posts, botIds) => {
+  let data = [];
+  let ids = [];
+  for (let i = 0; i < botIds.length; i++) {
+    for (let j = 0; j < 10; j++) {
+      data.push({
+        title: `${j}-${posts[i].title}-${botIds[i].id}`,
+        content: posts[j].body,
+        botId: botIds[i].id,
       });
     }
-    ids = await db.insert(botPosts).values(posts).$returningId();
-    for await (let id of ids) {
-      await createComments({
-        postId: id.id,
-      });
-    }
-  } catch (e) {
-    console.log(e);
   }
+  ids = await db.insert(botPosts).values(data).$returningId();
+
+  return ids;
 };
 
-const createBots = async () => {
-  try {
-    const users = [];
-    let ids = [];
-    const response = await get("users");
-    for (let i = 0; i < 10; i++) {
-      users.push({
-        name: `${response.data[i].username}-${lastId}`,
-        lastId,
-      });
-      lastId = lastId + 1;
-    }
-    ids = await db.insert(bots).values(users).$returningId();
-
-    for await (let id of ids) {
-      await createPosts({
-        botId: id.id,
-      });
-    }
-  } catch (e) {
-    console.log(e);
+const createBots = async (users) => {
+  const data = [];
+  let ids = [];
+  for (let i = 0; i < users.length; i++) {
+    data.push({
+      name: `${users[i].username}-${lastId}`,
+      lastId,
+    });
+    lastId = lastId + 1;
   }
+  ids = await db.insert(bots).values(data).$returningId();
+
+  return ids;
 };
 
 const totalBots = async () =>
   await db.select({ value: count(bots.id) }).from(bots);
 
+const makeCall = async () => {
+  await Promise.all([get("users"), get("posts"), get("comments")])
+    .then(async ([bots, posts, comments]) => {
+      const botIds = await createBots(bots.data);
+      const postIds = await createPosts(posts.data, botIds);
+      await createComments(comments.data, postIds);
+    })
+    .catch((e) => console.log(e));
+};
+
 module.exports = {
-  createBots,
   totalBots,
+  makeCall,
 };
