@@ -1,9 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const rateLimit = require("express-rate-limit");
 
-const botService = require("./service");
+const { rateLimiter, refillBucket } = require("./limiter/tokenBucket");
 
 const agenda = require("./jobs");
 
@@ -13,11 +12,6 @@ const corsOption = {
   origin: "http://localhost:8080",
   credential: true,
 };
-
-const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  limit: 5,
-});
 
 (async function () {
   await agenda.start();
@@ -34,7 +28,7 @@ app.use(cors(corsOption));
 
 app.get("/stream", streamHandler);
 
-app.use(limiter);
+app.use(rateLimiter);
 app.use("/api/v1/bots", require("./bots"));
 
 module.exports = app;
