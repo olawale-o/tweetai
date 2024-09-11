@@ -22,7 +22,8 @@ const limiter = rateLimit({
 (async function () {
   await agenda.start();
 
-  await agenda.every("1.2 minutes", "create-bots", { priority: "high" });
+  // await agenda.every("1.2 minutes", "create-bots", { priority: "high" });
+  await agenda.every("1 minutes", "backup");
 })();
 
 const app = express();
