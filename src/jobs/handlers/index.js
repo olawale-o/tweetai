@@ -1,4 +1,5 @@
 const botService = require("../../service");
+const backupService = require("../../service/backup");
 
 const JobHandlers = {
   createBots: async (job, done) => {
@@ -7,6 +8,11 @@ const JobHandlers = {
   },
   sendTotalBots: async (job, done) => {
     const totalBots = await botService.totalBots();
+
+    done();
+  },
+  backup: async (job, done) => {
+    backupService();
 
     done();
   },
